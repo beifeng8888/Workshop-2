@@ -8,6 +8,7 @@ import {
 } from '@ant-design/icons';
 import './codelab.css';
 import { useNavigate } from 'react-router-dom';
+import ContainerList from './list.tsx';
 
 const { Header, Content } = Layout;
 
@@ -15,7 +16,54 @@ const CodeLab = () => {
   const [activeButton, setActiveButton] = useState('assignments');
   const navigate = useNavigate();
   
-  // 提升状态到顶级组件
+  // 提升容器状态到顶级组件
+  const [containers, setContainers] = useState([
+    {
+      id: "c1",
+      name: "Web Server",
+      status: "running",
+      createdAt: "2024-01-10T08:30:00Z",
+      lastRunAt: "2024-01-15T14:45:00Z",
+      description: "Nginx web server container",
+      tags: ["web", "nginx"]
+    },
+    {
+      id: "c2",
+      name: "Database",
+      status: "running",
+      createdAt: "2024-01-05T10:15:00Z",
+      lastRunAt: "2024-01-15T09:30:00Z",
+      description: "PostgreSQL database container",
+      tags: ["db", "postgres"]
+    },
+    {
+      id: "c3",
+      name: "API Service",
+      status: "stopped",
+      createdAt: "2024-01-12T11:20:00Z",
+      lastRunAt: "2024-01-14T16:20:00Z",
+      description: "Node.js API service container",
+      tags: ["api", "nodejs"]
+    }
+  ]);
+  
+  // 在顶级组件中定义 addNewList 函数
+  const addNewList = () => {
+    const newId = `c${containers.length + 1}`;
+    const newContainer = {
+      id: newId,
+      name: `新容器 ${containers.length + 1}`,
+      status: "stopped",
+      createdAt: new Date().toISOString(),
+      description: "新创建的容器",
+      tags: ["new"]
+    };
+    
+    setContainers([...containers, newContainer]);
+    message.success('新容器已添加');
+  };
+  
+  // 课程卡片状态
   const [courses, setCourses] = useState([
     {
       id: 1,
@@ -88,7 +136,7 @@ const CodeLab = () => {
       </div>
       
       <div className="header-right">
-        <Button type="primary" icon={<PlusOutlined />} onClick={addNewCard}>
+        <Button type="primary" icon={<PlusOutlined />} onClick={addNewList}>
           New Container
         </Button>
         <Dropdown overlay={settingsMenu} trigger={['click']}>
@@ -121,7 +169,11 @@ const CodeLab = () => {
             <div className="icon-wrapper">
               <CheckCircleFilled style={{ color: '#52c41a', fontSize: '24px' }} />
             </div>
-            </div>
+          </div>
+          <div className="sub-stat">
+            <div className="sub-label">In Progress</div>
+            <div className="sub-value">3</div>
+          </div>
         </Card>
         
         <Card className="stat-card">
@@ -145,6 +197,10 @@ const CodeLab = () => {
             <div className="icon-wrapper">
               <ContainerFilled style={{ color: '#722ed1', fontSize: '24px' }} />
             </div>
+          </div>
+          <div className="sub-stat">
+            <div className="sub-label">Running</div>
+            <div className="sub-value">2</div>
           </div>
         </Card>
         
@@ -318,11 +374,14 @@ const CodeLab = () => {
           <p>Manage your assignments, experiments, and development environments.</p>
         </div>
         
-        <StatsCards />
+        {/**<StatsCards />**/}
         
         <FunctionAndSearchArea />
         
-        <CourseCardsContainer />
+        <ContainerList 
+          containers={containers} 
+          setContainers={setContainers} 
+        />
       </Content>
     </Layout>
   );

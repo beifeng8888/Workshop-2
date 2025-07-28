@@ -1,37 +1,40 @@
-import { useState, useEffect } from 'react';
 import { ProDescriptions } from '@ant-design/pro-components';
-import { Input, Tooltip, Tag, message } from 'antd';
+import { Input, Tooltip, Tag, message, Button } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import { PlusOutlined } from '@ant-design/icons';
+// 容器状态类型定义
+type ContainerStatus = 'running' | 'stopped' | 'restarting' | 'exited';
 
-const ContainerInfo = ({ containerId }) => {
-  const [data, setData] = useState<Record<string, any>>({});
-  const [loading, setLoading] = useState(true);
+// 容器信息接口
+interface ContainerInfo {
+  id: string;
+  name: string;
+  status: ContainerStatus;
+  createdAt: string;
+  lastRunAt?: string;
+  lastRunAgo?: string;
+  description?: string;
+  tags?: string[];
+}
 
-  // 1. 获取容器信息的API调用
-  const fetchContainerData = async () => {
-    try {
-      // 这里使用你提供的API结构，实际使用时替换为你的API URL
-      const response = await fetch(`/api/containers/${containerId}`);
-      const result = await response.json();
-      
-      if (result.success) {
-        // 添加上次运行时间计算逻辑
-        const lastRunAgo = calculateTimeAgo(result.data.lastRunAt);
-        setData({
-          ...result.data,
-          lastRunAgo // 新增字段：上次运行时间描述
-        });
-      } else {
-        message.error('数据加载失败');
-      }
-    } catch (err) {
-      message.error('网络请求异常');
-    } finally {
-      setLoading(false);
-    }
+interface ContainerListProps {
+  containers: ContainerInfo[];
+  setContainers: (containers: ContainerInfo[]) => void;
+}
+
+const ContainerList = ({ containers, setContainers }: ContainerListProps) => {
+  const navigate = useNavigate();
+  
+  // 状态枚举定义
+  const statusEnum: Record<ContainerStatus, { text: string; color: string }> = {
+    running: { text: '运行中', color: 'green' },
+    stopped: { text: '已停止', color: 'red' },
+    restarting: { text: '重启中', color: 'blue' },
+    exited: { text: '已退出', color: 'gray' }
   };
-
-  // 2. 计算"上次运行是多久前"
-  const calculateTimeAgo = (timestamp) => {
+  
+  // 计算"上次运行是多久前"
+  const calculateTimeAgo = (timestamp?: string) => {
     if (!timestamp) return '从未运行';
     
     const now = new Date();
@@ -48,124 +51,210 @@ const ContainerInfo = ({ containerId }) => {
     const diffDays = Math.floor(diffHours / 24);
     return `${diffDays}天前`;
   };
-
-  // 3. 数据保存处理
-  const handleSave = async (key, value) => {
-    try {
-      // 这里使用你提供的API结构
-      const response = await fetch(`/api/containers/${containerId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ [key]: value })
-      });
-      
-      const result = await response.json();
-      if (result.success) {
-        setData(prev => ({ ...prev, [key]: value }));
-        message.success('配置更新成功');
-      } else {
-        message.error('更新失败');
-      }
-    } catch (err) {
-      message.error('请求异常');
-    }
+  
+  // 启动容器
+  const startContainer = (id: string) => {
+    setContainers(containers.map(container => 
+      container.id === id ? { ...container, status: "running" } : container
+    ));
+    message.success('容器已启动');
   };
-
-  useEffect(() => {
-    if (containerId) fetchContainerData();
-  }, [containerId]);
-
-  // 4. 状态枚举定义
-  type ContainerStatus = 'running' | 'stopped' | 'restarting' | 'exited';
-
-  const statusEnum: Record<ContainerStatus, { text: string; color: string }> = {
-    running: { text: '运行中', color: 'green' },
-    stopped: { text: '已停止', color: 'red' },
-    restarting: { text: '重启中', color: 'blue' },
-    exited: { text: '已退出', color: 'gray' }
+  
+  // 停止容器
+  const stopContainer = (id: string) => {
+    setContainers(containers.map(container => 
+      container.id === id ? { ...container, status: "stopped" } : container
+    ));
+    message.success('容器已停止');
   };
-
-  if (loading) return <div>加载容器信息...</div>;
-  if (!data) return <div>未获取到数据</div>;
+  
+  // 重启容器
+  const restartContainer = (id: string) => {
+    setContainers(containers.map(container => 
+      container.id === id ? { ...container, status: "restarting" } : container
+    ));
+    
+    // 模拟重启过程
+    setTimeout(() => {
+      setContainers(containers.map(container => 
+        container.id === id ? { ...container, status: "running" } : container
+      ));
+      message.success('容器已重启');
+    }, 2000);
+  };
+  
+  // 删除容器
+  const deleteContainer = (id: string) => {
+    setContainers(containers.filter(container => container.id !== id));
+    message.success('容器已删除');
+  };
+  
+  // 进入容器
+  const enterContainer = (id: string) => {
+    navigate(`/container/${id}`);
+  };
+  
+  // 更新容器信息
+  const updateContainer = (id: string, key: keyof ContainerInfo, value: any) => {
+    setContainers(containers.map(container => 
+      container.id === id ? { ...container, [key]: value } : container
+    ));
+    message.success('容器信息已更新');
+  };
 
   return (
-    <ProDescriptions
-      column={1}
-      title="容器详情"
-      dataSource={data}
-      loading={loading}
-      editable={{
-        onSave: (keypath, value) => handleSave(keypath, value),
-      }}
-      // 保持原有样式配置
-      style={{ background: '#fff', borderRadius: 8, padding: 16 }}
-    >
-      {/* 容器ID - 不可编辑 */}
-      <ProDescriptions.Item
-        label="容器ID"
-        dataIndex="id"
-        copyable
-        editable={false}
-        render={(id) => <Tooltip title="唯一标识符">{id}</Tooltip>}
-      />
+    <div className="container-list">
+      <div className="list-header" >
+        <h2>容器列表</h2>
+        <Button 
+          type="primary" 
+          icon={<PlusOutlined />}
+          onClick={() => {
+            const newId = `c${containers.length + 1}`;
+            const newContainer: ContainerInfo = {
+              id: newId,
+              name: `新容器 ${containers.length + 1}`,
+              status: "stopped",
+              createdAt: new Date().toISOString(),
+              description: "新创建的容器",
+              tags: ["new"]
+            };
+            
+            setContainers([...containers, newContainer]);
+            message.success('新容器已添加');
+          }}
+        >
+          添加新容器
+        </Button>
+      </div>
+      
+      <div className="containers-grid">
+        {containers.map(container => {
+          const lastRunAgo = calculateTimeAgo(container.lastRunAt);
+          
+          return (
+            <div key={container.id} className="container-card">
+              <ProDescriptions
+                column={1}
+                title={container.name}
+                dataSource={container}
+                style={{ background: '#fff', borderRadius: 8, padding: 16 }}
+                extra={
+                  <div className="action-buttons">
+                    {container.status === 'running' ? (
+                      <Button 
+                        type="link" 
+                        danger
+                        onClick={() => stopContainer(container.id)}
+                      >
+                        停止
+                      </Button>
+                    ) : (
+                      <Button 
+                        type="link" 
+                        onClick={() => startContainer(container.id)}
+                      >
+                        启动
+                      </Button>
+                    )}
+                    
+                    {/**<Button 
+                      type="link" 
+                      onClick={() => enterContainer(container.id)}
+                    >
+                      进入
+                    </Button>**/}
+                    <Button 
+                      type="link" 
+                      onClick={() => navigate('/')}
+                    >
+                      进入
+                    </Button>
 
-      {/* 容器名称 - 可编辑 */}
-      <ProDescriptions.Item
-        label="名称"
-        dataIndex="name"
-        renderFormItem={() => (
-          <Input placeholder="输入容器名称" maxLength={24} />
-        )}
-      />
-      {/*  状态 - 不可编辑（通过API操作） */}
-      <ProDescriptions.Item
-        label="状态"
-        dataIndex="status"
-        render={(text) => (
-          <Tag color={statusEnum[text as ContainerStatus]?.color}>
-            {statusEnum[text as ContainerStatus]?.text}
-          </Tag>
-        )}
-        editable={false}
-      />
-
-      {/* 创建时间 - 不可编辑 */}
-      <ProDescriptions.Item
-        label="创建时间"
-        dataIndex="createdAt"
-        valueType="dateTime"
-        editable={false}
-      />
-
-      {/* 上次运行时间 - 动态计算显示 */}
-      <ProDescriptions.Item
-        label="上次运行时间"
-        dataIndex="lastRunAgo"
-        editable={false}
-        render={(text) => <Tag color={text === '从未运行' ? 'orange' : 'geekblue'}>{text}</Tag>}
-      />
-
-      {/* 操作按钮 */}
-      <ProDescriptions.Item
-        label="操作"
-        valueType="option"
-        render={(_, record) => [
-          record.status === 'running' ? (
-            <a key="stop" onClick={() => console.log('停止容器')}>
-              停止
-            </a>
-          ) : (
-            <a key="start" onClick={() => console.log('启动容器')}>
-              启动
-            </a>
-          ),
-          <a key="restart" onClick={() => console.log('重启容器')} style={{ marginLeft: 8 }}>
-            进入容器
-          </a>
-        ]}
-      />
-    </ProDescriptions>
+                    <Button 
+                      type="link" 
+                      danger
+                      onClick={() => deleteContainer(container.id)}
+                    >
+                      删除
+                    </Button>
+                  </div>
+                }
+              >
+                <ProDescriptions.Item
+                  label="容器ID"
+                  dataIndex="id"
+                  copyable
+                  render={(id) => <Tooltip title="唯一标识符">{id}</Tooltip>}
+                />
+                
+                <ProDescriptions.Item
+                  label="名称"
+                  dataIndex="name"
+                  renderFormItem={() => (
+                    <Input 
+                      placeholder="输入容器名称" 
+                      maxLength={24}
+                      onBlur={(e) => updateContainer(container.id, 'name', e.target.value)}
+                    />
+                  )}
+                />
+                
+                <ProDescriptions.Item
+                  label="状态"
+                  dataIndex="status"
+                  render={(text) => (
+                    <Tag color={statusEnum[text as ContainerStatus]?.color}>
+                      {statusEnum[text as ContainerStatus]?.text}
+                    </Tag>
+                  )}
+                />
+                
+                <ProDescriptions.Item
+                  label="创建时间"
+                  dataIndex="createdAt"
+                  valueType="dateTime"
+                />
+                
+                <ProDescriptions.Item
+                  label="上次运行时间"
+                  dataIndex="lastRunAgo"
+                  render={() => <Tag color={lastRunAgo === '从未运行' ? 'orange' : 'geekblue'}>{lastRunAgo}</Tag>}
+                />
+                
+                {container.description && (
+                  <ProDescriptions.Item
+                    label="描述"
+                    dataIndex="description"
+                    renderFormItem={() => (
+                      <Input.TextArea 
+                        placeholder="输入容器描述"
+                        onBlur={(e) => updateContainer(container.id, 'description', e.target.value)}
+                      />
+                    )}
+                  />
+                )}
+                
+                {container.tags && container.tags.length > 0 && (
+                  <ProDescriptions.Item
+                    label="标签"
+                    dataIndex="tags"
+                    render={(tags) => (
+                      <div className="tags-container">
+                        {tags.map((tag: string, index: number) => (
+                          <Tag key={index}>{tag}</Tag>
+                        ))}
+                      </div>
+                    )}
+                  />
+                )}
+              </ProDescriptions>
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 };
 
-export default ContainerInfo;
+export default ContainerList;

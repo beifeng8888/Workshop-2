@@ -1,9 +1,37 @@
-/* 基础布局 */
-.codelab-layout {
-  min-height: 100vh;
-  background-color: #ffffff;
+/* 基础布局和重置 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
+:root {
+  --primary-color: #1890ff;
+  --success-color: #52c41a;
+  --warning-color: #faad14;
+  --error-color: #f5222d;
+  --text-color: #1f1f1f;
+  --text-secondary: #595959;
+  --border-color: #f0f0f0;
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+  --card-hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+body {
+  background-color: #f5f7fa;
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+/* 布局容器 */
+.codelab-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 顶部导航栏 */
 .codelab-header {
   display: flex;
   justify-content: space-between;
@@ -11,40 +39,98 @@
   padding: 0 24px;
   height: 64px;
   background-color: #fff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
-
-.header-left, .header-right {
+.header-left {
   display: flex;
   align-items: center;
 }
 
-/* 徽标样式 */
 .logo {
   display: flex;
   align-items: center;
+  margin-right: 24px;
 }
 
 .logo-blue-box {
   width: 24px;
   height: 24px;
-  background-color: #1890ff;
+  background-color: var(--primary-color);
   border-radius: 4px;
-  margin-right: 10px;
+  margin-right: 8px;
 }
 
 .logo-text {
   font-size: 18px;
   font-weight: 600;
-  color: #1890ff;
+  color: var(--primary-color);
 }
 
-/* 内容区域 */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.new-container-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.new-container-button:hover {
+  background-color: #096dd9;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.icon-button:hover {
+  background-color: #f5f5f5;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #f56a00;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* 主体内容区域 */
 .codelab-content {
+  flex: 1;
   padding: 24px 48px;
   max-width: 1400px;
   margin: 0 auto;
+  width: 100%;
 }
 
 .welcome-section {
@@ -53,80 +139,50 @@
 
 .welcome-section h1 {
   font-size: 36px;
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 8px;
-  color: #1f1f1f;
+  color: var(--text-color);
 }
 
 .welcome-section p {
   font-size: 16px;
-  color: #595959;
+  color: var(--text-secondary);
 }
 
-/* 统计卡片 */
-.stats-cards {
-  margin-bottom: 32px;
+/* 容器列表样式 */
+.container-list {
+  padding: 24px;
 }
 
-.five-column-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 16px;
-}
-
-.ant-card .ant-card-body {
-  padding: 10px !important;
-}
-
-.stat-card {
-  border-radius: 8px;
-  padding: 16px;
-  background-color: #fff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-}
-
-.card-content {
+/* 标题区域 - 修复布局 */
+.list-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 8px;
-}
-
-.stat-text .label {
-  font-size: 14px;
-  color: #8c8c8c;
-}
-
-.stat-text .value {
-  font-size: 28px;
-  font-weight: 600;
-  color: #1f1f1f;
-}
-
-.icon-wrapper {
-  display: flex;
   align-items: center;
+  margin-bottom: 24px;
 }
 
-.sub-stat {
-  display: flex;
-  font-size: 12px;
-  color: #595959;
+.list-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0; /* 移除默认边距 */
 }
 
-.sub-label {
-  margin-right: 8px;
+/* 网格布局 */
+.containers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 24px;
 }
 
-.sub-value {
-  font-weight: 500;
-}
-
-/* 功能区按钮 */
+/* 功能区按钮和搜索区域 */
 .function-and-search-area {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .function-buttons {
@@ -134,182 +190,197 @@
   gap: 16px;
 }
 
+.function-buttons .ant-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.function-buttons .ant-btn:not(.ant-btn-primary) {
+  background-color: #f5f5f5;
+  border-color: #d9d9d9;
+}
+
+.function-buttons .ant-btn:not(.ant-btn-primary):hover {
+  background-color: #e6e6e6;
+}
+
 .search-filter-container {
   display: flex;
+  gap: 12px;
 }
 
 .search-input {
-  flex: 1;
-  margin-right: 16px;
-  max-width: 300px;
+  width: 300px;
+}
+
+.search-input .ant-input {
+  border-radius: 6px;
+  padding: 10px 16px;
 }
 
 .filter-button {
   background-color: #f5f5f5;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  padding: 0 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-/* 课程卡片容器 */
-.course-cards-container {
-  margin-top: 24px;
+.filter-button:hover {
+  background-color: #e6e6e6;
 }
 
-.course-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-  margin-bottom: 24px;
-}
-
-.course-card {
+/* 卡片样式 */
+.container-card {
+  border: 1px solid #f0f0f0;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.course-card:hover {
+.container-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--card-hover-shadow);
 }
 
-.course-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.course-title {
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.course-rating {
-  font-weight: 600;
-  color: #faad14;
-}
-
-.course-level {
-  margin-bottom: 10px;
-}
-
-.course-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin-bottom: 12px;
-}
-
-.course-tag {
-  font-size: 12px;
-  padding: 0 8px;
-  border-radius: 12px;
-  background-color: #f0f0f0;
-}
-
-.course-description {
-  font-size: 13px;
-  color: #595959;
-  line-height: 1.6;
-  min-height: 40px;
-  margin-bottom: 20px;
-}
-
-.course-footer {
-  border-top: 1px solid #f0f0f0;
-  padding-top: 16px;
-}
-
-.course-info {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 12px;
-  color: #8c8c8c;
-  font-size: 12px;
-}
-
-.progress-container {
-  margin-bottom: 12px;
-}
-
-.progress-text {
-  font-size: 12px;
-  margin-bottom: 4px;
-  color: #595959;
-}
-
+/* 操作按钮样式 */
 .action-buttons {
   display: flex;
-  justify-content: space-between;
+  gap: 8px;
 }
 
-.action-button {
+.action-buttons .ant-btn {
   padding: 0;
+  height: auto;
 }
 
-.add-card-button-container {
+/* 标签容器 */
+.tags-container {
   display: flex;
-  justify-content: center;
-}
-
-.add-card-button {
-  width: 200px;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 /* 响应式设计 */
 @media (max-width: 1200px) {
-  .five-column-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-  
-  .course-grid {
+  .containers-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
 @media (max-width: 992px) {
-  .five-column-grid {
-    grid-template-columns: repeat(3, 1fr);
+  .codelab-content {
+    padding: 24px;
   }
   
-  .course-grid {
+  .containers-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 768px) {
-  .five-column-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .course-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .codelab-content {
-    padding: 24px;
-  }
-  
-  .function-and-search-area {
-    flex-direction: column;
-    gap: 16px;
-  }
-  
-  .function-buttons {
-    width: 100%;
-    justify-content: center;
-  }
-  
-  .search-filter-container {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-@media (max-width: 576px) {
-  .five-column-grid {
+  .containers-grid {
     grid-template-columns: 1fr;
   }
   
   .header-right {
     flex-wrap: wrap;
   }
+  
+  .welcome-section h1 {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 576px) {
+  .codelab-header {
+    padding: 0 16px;
+  }
+  
+  .function-buttons {
+    flex-direction: column;
+  }
+  
+  .search-filter-container {
+    flex-direction: column;
+  }
+  
+  .search-input {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 12px;
+  }
+  
+  .filter-button {
+    width: 100%;
+  }
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.container-card {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* 操作按钮样式 */
+.actions-container {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.action-button {
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid #d9d9d9;
+}
+
+.action-button.start {
+  background-color: #52c41a;
+  color: white;
+  border-color: #52c41a;
+}
+
+.action-button.stop {
+  background-color: #ff4d4f;
+  color: white;
+  border-color: #ff4d4f;
+}
+
+.action-button.restart {
+  background-color: #1890ff;
+  color: white;
+  border-color: #1890ff;
+}
+
+.action-button.enter {
+  background-color: #faad14;
+  color: white;
+  border-color: #faad14;
+}
+
+.action-button.delete {
+  background-color: #f5f5f5;
+  color: #ff4d4f;
+  border-color: #d9d9d9;
+}
+
+.action-button:hover {
+  opacity: 0.8;
 }

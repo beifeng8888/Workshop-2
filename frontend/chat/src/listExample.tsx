@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ProDescriptions } from '@ant-design/pro-components';
 import { Input, Tooltip, Tag, message } from 'antd';
 import type { ProDescriptionsItemProps } from '@ant-design/pro-components';
-
+import { useNavigate } from 'react-router-dom';
 // --------------------------------------------------------------------
 // 1. 这是你提供的原始组件代码 (稍作类型优化以确保健壮性)
 // --------------------------------------------------------------------
@@ -29,6 +29,10 @@ interface ContainerInfoProps {
 }
 
 const ContainerInfo: React.FC<ContainerInfoProps> = ({ containerId }) => {
+  const navigate = useNavigate();
+  const handleViewAssignment = () => {
+      navigate('/');
+    };
   const [data, setData] = useState<Partial<ContainerData>>({});
   const [loading, setLoading] = useState(true);
 
@@ -97,7 +101,7 @@ const ContainerInfo: React.FC<ContainerInfoProps> = ({ containerId }) => {
   return (
     <ProDescriptions
       column={1}
-      title="容器详情"
+      title={data.name}
       dataSource={data}
       loading={loading}
       editable={{
@@ -163,7 +167,7 @@ const ContainerInfo: React.FC<ContainerInfoProps> = ({ containerId }) => {
               启动
             </a>
           ),
-          <a key="restart" onClick={() => message.info('模拟操作：进入容器')} style={{ marginLeft: 8 }}>
+          <a key="restart" onClick={handleViewAssignment} style={{ marginLeft: 8 }}>
             进入容器
           </a>,
            <a key="delete" onClick={() => message.warn('模拟操作：删除容器')} style={{ marginLeft: 8, color: 'red' }}>
