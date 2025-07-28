@@ -1,0 +1,315 @@
+/* 基础布局 */
+.codelab-layout {
+  min-height: 100vh;
+  background-color: #ffffff;
+}
+
+.codelab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+  height: 64px;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+
+.header-left, .header-right {
+  display: flex;
+  align-items: center;
+}
+
+/* 徽标样式 */
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo-blue-box {
+  width: 24px;
+  height: 24px;
+  background-color: #1890ff;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+.logo-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1890ff;
+}
+
+/* 内容区域 */
+.codelab-content {
+  padding: 24px 48px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.welcome-section {
+  margin-bottom: 32px;
+}
+
+.welcome-section h1 {
+  font-size: 36px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #1f1f1f;
+}
+
+.welcome-section p {
+  font-size: 16px;
+  color: #595959;
+}
+
+/* 统计卡片 */
+.stats-cards {
+  margin-bottom: 32px;
+}
+
+.five-column-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+
+.ant-card .ant-card-body {
+  padding: 10px !important;
+}
+
+.stat-card {
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.card-content {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.stat-text .label {
+  font-size: 14px;
+  color: #8c8c8c;
+}
+
+.stat-text .value {
+  font-size: 28px;
+  font-weight: 600;
+  color: #1f1f1f;
+}
+
+.icon-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.sub-stat {
+  display: flex;
+  font-size: 12px;
+  color: #595959;
+}
+
+.sub-label {
+  margin-right: 8px;
+}
+
+.sub-value {
+  font-weight: 500;
+}
+
+/* 功能区按钮 */
+.function-and-search-area {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.function-buttons {
+  display: flex;
+  gap: 16px;
+}
+
+.search-filter-container {
+  display: flex;
+}
+
+.search-input {
+  flex: 1;
+  margin-right: 16px;
+  max-width: 300px;
+}
+
+.filter-button {
+  background-color: #f5f5f5;
+}
+
+/* 课程卡片容器 */
+.course-cards-container {
+  margin-top: 24px;
+}
+
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.course-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.course-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.course-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.course-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.course-rating {
+  font-weight: 600;
+  color: #faad14;
+}
+
+.course-level {
+  margin-bottom: 10px;
+}
+
+.course-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+
+.course-tag {
+  font-size: 12px;
+  padding: 0 8px;
+  border-radius: 12px;
+  background-color: #f0f0f0;
+}
+
+.course-description {
+  font-size: 13px;
+  color: #595959;
+  line-height: 1.6;
+  min-height: 40px;
+  margin-bottom: 20px;
+}
+
+.course-footer {
+  border-top: 1px solid #f0f0f0;
+  padding-top: 16px;
+}
+
+.course-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  color: #8c8c8c;
+  font-size: 12px;
+}
+
+.progress-container {
+  margin-bottom: 12px;
+}
+
+.progress-text {
+  font-size: 12px;
+  margin-bottom: 4px;
+  color: #595959;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.action-button {
+  padding: 0;
+}
+
+.add-card-button-container {
+  display: flex;
+  justify-content: center;
+}
+
+.add-card-button {
+  width: 200px;
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  .five-column-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .course-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .five-column-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .course-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .five-column-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .course-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .codelab-content {
+    padding: 24px;
+  }
+  
+  .function-and-search-area {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .function-buttons {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .search-filter-container {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .five-column-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .header-right {
+    flex-wrap: wrap;
+  }
+}
