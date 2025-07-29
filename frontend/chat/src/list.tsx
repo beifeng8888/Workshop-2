@@ -2,6 +2,7 @@ import { ProDescriptions } from '@ant-design/pro-components';
 import { Input, Tooltip, Tag, message, Button } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { PlusOutlined } from '@ant-design/icons';
+import { useRef } from 'react';
 // 容器状态类型定义
 type ContainerStatus = 'running' | 'stopped' | 'restarting' | 'exited';
 
@@ -24,6 +25,11 @@ interface ContainerListProps {
 
 const ContainerList = ({ containers, setContainers }: ContainerListProps) => {
   const navigate = useNavigate();
+  const actionRef = useRef<any>();
+
+  const handleViewAssignment = () => {
+    navigate('/');
+  };
   
   // 状态枚举定义
   const statusEnum: Record<ContainerStatus, { text: string; color: string }> = {
@@ -104,7 +110,7 @@ const ContainerList = ({ containers, setContainers }: ContainerListProps) => {
 
   return (
     <div className="container-list">
-      <div className="list-header" >
+      <div className="list-header">
         <h2>容器列表</h2>
         <Button 
           type="primary" 
@@ -135,10 +141,18 @@ const ContainerList = ({ containers, setContainers }: ContainerListProps) => {
           return (
             <div key={container.id} className="container-card">
               <ProDescriptions
+                actionRef={actionRef}
                 column={1}
                 title={container.name}
                 dataSource={container}
                 style={{ background: '#fff', borderRadius: 8, padding: 16 }}
+                editable={{
+                  onSave: async (keypath, newInfo, originRow) => {
+                    // 当保存时更新容器信息
+                    updateContainer(container.id, keypath as keyof ContainerInfo, newInfo[keypath]);
+                    return true;
+                  }
+                }}
                 extra={
                   <div className="action-buttons">
                     {container.status === 'running' ? (
@@ -158,15 +172,9 @@ const ContainerList = ({ containers, setContainers }: ContainerListProps) => {
                       </Button>
                     )}
                     
-                    {/**<Button 
-                      type="link" 
-                      onClick={() => enterContainer(container.id)}
-                    >
-                      进入
-                    </Button>**/}
                     <Button 
                       type="link" 
-                      onClick={() => navigate('/')}
+                      onClick={handleViewAssignment}
                     >
                       进入
                     </Button>
@@ -185,9 +193,10 @@ const ContainerList = ({ containers, setContainers }: ContainerListProps) => {
                   label="容器ID"
                   dataIndex="id"
                   copyable
-                  render={(id) => <Tooltip title="唯一标识符">{id}</Tooltip>}
+                  editable={false}
                 />
                 
+                {/* 可编辑的名称字段 */}
                 <ProDescriptions.Item
                   label="名称"
                   dataIndex="name"
@@ -195,14 +204,25 @@ const ContainerList = ({ containers, setContainers }: ContainerListProps) => {
                     <Input 
                       placeholder="输入容器名称" 
                       maxLength={24}
-                      onBlur={(e) => updateContainer(container.id, 'name', e.target.value)}
                     />
+                  )}
+                  render={(text, record, index, action) => (
+                    <Tooltip title="点击编辑名称">
+                      <div
+                        onClick={() => {
+                          action?.startEditable('name');
+                        }}
+                      >
+                        {text}
+                      </div>
+                    </Tooltip>
                   )}
                 />
                 
                 <ProDescriptions.Item
                   label="状态"
                   dataIndex="status"
+                  editable={false}
                   render={(text) => (
                     <Tag color={statusEnum[text as ContainerStatus]?.color}>
                       {statusEnum[text as ContainerStatus]?.text}
@@ -214,31 +234,44 @@ const ContainerList = ({ containers, setContainers }: ContainerListProps) => {
                   label="创建时间"
                   dataIndex="createdAt"
                   valueType="dateTime"
+                  editable={false}
                 />
                 
                 <ProDescriptions.Item
                   label="上次运行时间"
                   dataIndex="lastRunAgo"
                   render={() => <Tag color={lastRunAgo === '从未运行' ? 'orange' : 'geekblue'}>{lastRunAgo}</Tag>}
+                  editable={false}
                 />
                 
-                {container.description && (
-                  <ProDescriptions.Item
-                    label="描述"
-                    dataIndex="description"
-                    renderFormItem={() => (
-                      <Input.TextArea 
-                        placeholder="输入容器描述"
-                        onBlur={(e) => updateContainer(container.id, 'description', e.target.value)}
-                      />
-                    )}
-                  />
-                )}
-                
+                {/* 可编辑的描述字段 */}
+                <ProDescriptions.Item
+                  label="描述"
+                  dataIndex="description"
+                  renderFormItem={() => (
+                    <Input.TextArea 
+                      placeholder="输入容器描述"
+                      rows={3}
+                    />
+                  )}
+                  render={(text, record, index, action) => (
+                    <Tooltip title="点击编辑描述">
+                      <div
+                        onClick={() => {
+                          action?.startEditable('description');
+                        }}
+                      >
+                        {text || <span style={{ color: '#bfbfbf' }}>暂无描述</span>}
+                      </div>
+                    </Tooltip>
+                  )}
+                />
+                {/** 
                 {container.tags && container.tags.length > 0 && (
                   <ProDescriptions.Item
                     label="标签"
                     dataIndex="tags"
+                    editable={false}
                     render={(tags) => (
                       <div className="tags-container">
                         {tags.map((tag: string, index: number) => (
@@ -248,6 +281,7 @@ const ContainerList = ({ containers, setContainers }: ContainerListProps) => {
                     )}
                   />
                 )}
+                */}
               </ProDescriptions>
             </div>
           );

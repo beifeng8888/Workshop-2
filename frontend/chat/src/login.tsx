@@ -35,33 +35,61 @@ const LoginPage = () => {
     cursor: 'pointer',
   };
 
-  const handleSubmit = async (values ) => {
-    // 特殊检测：如果手机号是特定号码且密码为123456，则直接登录成功
-    //const specialPhoneNumber = '13888888888'; // 请替换为您实际的特殊手机号
-    
+  const handleSubmit = async (values) => {
+    // 保留硬编码测试账号逻辑
     if (
       loginType === 'account' && 
       values.username === 'admin' && 
       values.password === '123456'
     ) {
-      // 特殊账号登录成功
       localStorage.setItem('isLoggedIn', 'true');
       navigate('/workspace');
       return;
     }
     
     if (loginType === 'account') {
-      // 账号密码登录
-      if (values.username === 'admin' && values.password === '888888') {
-        // 登录成功
-        localStorage.setItem('isLoggedIn', 'true');
-        navigate('/workspace');
-      } else {
-        message.error('用户名或密码错误');
+      try {
+        // 调用后端登录API
+        // 构建查询字符串（username=xxx&password=xxx）
+        const params = new URLSearchParams();
+        params.append('username', values.username);
+        params.append('password', values.password);
+
+        /*
+        // 请求 URL 改为：/users?username=xxx&password=xxx
+        const response = await fetch(`/users?${params.toString()}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded', // GET 方法推荐的类型
+          },
+        });
+        */
+
+        const response = await fetch(`http://localhost:8000/users?${params.toString()}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          // 允许跨域请求携带Cookie（因为你的登录依赖Session）
+          credentials: 'include',
+        });
+
+        const data = await response.json();
+        
+        // 假设后端返回200状态码表示登录成功
+        if (response.ok) {
+          localStorage.setItem('isLoggedIn', 'true');
+          navigate('/workspace');
+          message.success('登录成功');
+        } else {
+          message.error(data.message || '用户名或密码错误');
+        }
+      } catch (error) {
+        message.error('登录请求失败，请稍后重试');
+        console.error('登录错误:', error);
       }
     } else {
-      // 手机号登录，这里假设验证通过
-      // 实际中需要验证手机号和验证码
+      // 手机号登录逻辑保持不变
       localStorage.setItem('isLoggedIn', 'true');
       navigate('/workspace');
     }
@@ -72,7 +100,6 @@ const LoginPage = () => {
       <div style={{ backgroundColor: token.colorBgContainer }}>
         <LoginForm
             contentStyle={{
-            //width: '100%',
             height: '100%' 
         }}
           logo={<Logo />}

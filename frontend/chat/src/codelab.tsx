@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Layout, Button, Card, Avatar, Menu, Dropdown, Input, Progress, Tag } from 'antd';
+import { Layout, Button, Card, Avatar, Menu, Dropdown, Input, Progress, Tag, message } from 'antd';
 import { 
   PlusOutlined, SettingOutlined, SearchOutlined, 
   CheckCircleFilled, ClockCircleFilled, ExperimentFilled,
@@ -13,7 +13,7 @@ import ContainerList from './list.tsx';
 const { Header, Content } = Layout;
 
 const CodeLab = () => {
-  const [activeButton, setActiveButton] = useState('assignments');
+  const [activeButton, setActiveButton] = useState('containers');
   const navigate = useNavigate();
   
   // 提升容器状态到顶级组件
@@ -55,6 +55,7 @@ const CodeLab = () => {
       name: `新容器 ${containers.length + 1}`,
       status: "stopped",
       createdAt: new Date().toISOString(),
+      lastRunAt: new Date().toISOString(),
       description: "新创建的容器",
       tags: ["new"]
     };
@@ -271,7 +272,7 @@ const CodeLab = () => {
       </div>
     </div>
   );
-  
+  {/** 
   // 课程卡片组件
   const CourseCard = ({ title, rating, level, tags, description, duration, dueDate, progress }) => (
     <Card className="course-card">
@@ -362,7 +363,7 @@ const CodeLab = () => {
       </div>
     );
   };
-
+    */}
   // 主体内容区域
   return (
     <Layout className="codelab-layout">
